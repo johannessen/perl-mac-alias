@@ -6,9 +6,9 @@ use lib 'lib';
 
 use Test::More;
 use Test::Exception;
-use Test::Warnings;
+use Test::Warnings qw(warning);
 
-plan tests => 8 + 5 + 1;
+plan tests => 8 + 10 + 1;
 
 
 use Mac::Alias qw(read_alias read_alias_mac);
@@ -41,22 +41,27 @@ lives_and {
 
 
 # These aliases cannot be resolved by the Finder because the
-# kIsAlias flag isn' set.
-lives_and {
-	ok ! read_alias_mac 't/eg/folder.alias';
+# kIsAlias flag isn' set. We expect warnings on non-Mac systems.
+lives_ok {
+	warning { $r = read_alias_mac 't/eg/folder.alias' };
 } 'read_alias_mac folder.alias lives';
-lives_and {
-	ok ! read_alias_mac 't/eg/removable.alias';
+ok ! $r, 'read_alias_mac folder.alias';
+lives_ok {
+	warning { $r = read_alias_mac 't/eg/removable.alias' };
 } 'read_alias_mac removable.alias lives';
-lives_and {
-	ok ! read_alias_mac 't/eg/root.alias';
+ok ! $r, 'read_alias_mac removable.alias';
+lives_ok {
+	warning { $r = read_alias_mac 't/eg/root.alias' };
 } 'read_alias_mac root.alias lives';
-lives_and {
-	ok ! read_alias_mac __FILE__;
+ok ! $r, 'read_alias_mac root.alias';
+lives_ok {
+	warning { $r = read_alias_mac __FILE__ };
 } 'read_alias_mac self lives';
-lives_and {
-	ok ! read_alias_mac '.';
+ok ! $r, 'read_alias_mac self';
+lives_ok {
+	warning { $r = read_alias_mac '.' };
 } 'read_alias_mac dir lives';
+ok ! $r, 'read_alias_mac dir';
 
 
 done_testing;

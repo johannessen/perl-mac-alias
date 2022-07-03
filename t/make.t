@@ -40,7 +40,7 @@ ok ! $r, 'make_alias exists fails';
 
 
 lives_ok {
-	$r = make_alias $temp->child('file'), $temp->child('alias');
+	warning { $r = make_alias $temp->child('file'), $temp->child('alias') };
 } 'make_alias target lives';
 is $r, $temp->child('alias')->exists, 'make_alias target result';
 # Either fails because the script can't be executed,
@@ -51,7 +51,7 @@ my $alias = $temp->child('alias')->realpath;
 my $target = $temp->child('file')->realpath;
 
 SKIP: {
-	skip 'requires osascript', 3+4+3+7 if ! $target->exists;
+	skip 'requires osascript', 3+4+3+7 if ! $alias->exists;
 	
 	# verify earlier make succeeded
 	is read_alias      $alias, $target, 'read_alias';

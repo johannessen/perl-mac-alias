@@ -8,7 +8,7 @@ use Test::More;
 use Test::Exception;
 use Test::Warnings;
 
-plan tests => 5 + 8 + 5 + 1;
+plan tests => 5 + 8 + 8 + 1;
 
 
 use Mac::Alias qw(is_alias read_alias_perl parse_alias);
@@ -157,15 +157,28 @@ my $root_parsed = {
 # $Data::Dumper::Useqq = 1;
 
 
-lives_and {
-	is_deeply parse_alias 't/eg/folder.alias', $folder_parsed;
-} 'parse_alias folder.alias';
-lives_and {
-	is_deeply parse_alias 't/eg/removable.alias', $removable_parsed;
-} 'parse_alias removable.alias';
-lives_and {
-	is_deeply parse_alias 't/eg/root.alias', $root_parsed;
-} 'parse_alias root.alias';
+sub fmt_dates {
+	my $data = shift;
+	my $f = '%.12g';
+	$data->{creationDate} = sprintf $f, $data->{creationDate}
+		if $data->{creationDate};
+	$data->{volCreationDate} = sprintf $f, $data->{volCreationDate}
+		if $data->{volCreationDate};
+	$data->{next}{creationDate} = sprintf $f, $data->{next}{creationDate}
+		if $data->{next}{creationDate};
+	$data->{next}{volCreationDate} = sprintf $f, $data->{next}{volCreationDate}
+		if $data->{next}{volCreationDate};
+	$data;
+}
+
+lives_ok { $r = parse_alias 't/eg/folder.alias' } 'parse_alias folder.alias lives';
+is_deeply fmt_dates($r), fmt_dates($folder_parsed), 'parse_alias folder.alias';
+
+lives_ok { $r = parse_alias 't/eg/removable.alias' } 'parse_alias removable.alias lives';
+is_deeply fmt_dates($r), fmt_dates($removable_parsed), 'parse_alias removable.alias';
+
+lives_ok { $r = parse_alias 't/eg/root.alias' } 'parse_alias root.alias lives';
+is_deeply fmt_dates($r), fmt_dates($root_parsed), 'parse_alias root.alias';
 
 throws_ok { parse_alias __FILE__} qr/\bNot a data fork alias\b/i, 'no parse_alias self';
 throws_ok { parse_alias '.'} qr/\bNot a data fork alias\b/i, 'no parse_alias self';
