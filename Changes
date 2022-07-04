@@ -1,5 +1,9 @@
 Revision history for Mac::Alias
 
+1.0101  2022-07-04
+
+ - Fix a bug in the test suite
+
 1.01  2022-07-03
 
  - Fix several bugs in the test suite

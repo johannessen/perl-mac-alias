@@ -181,7 +181,7 @@ lives_ok { $r = parse_alias 't/eg/root.alias' } 'parse_alias root.alias lives';
 is_deeply fmt_dates($r), fmt_dates($root_parsed), 'parse_alias root.alias';
 
 throws_ok { parse_alias __FILE__} qr/\bNot a data fork alias\b/i, 'no parse_alias self';
-throws_ok { parse_alias '.'} qr/\bNot a data fork alias\b/i, 'no parse_alias self';
+throws_ok { parse_alias 't/eg' } qr{\bt/eg: }, 'no parse_alias dir';
 
 
 done_testing;
